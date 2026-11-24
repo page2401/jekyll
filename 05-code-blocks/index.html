@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>05. 高阶代码块与语法高亮 · Jekyll 基准实测站</title>
+    
+    <meta name="description" content="实测 Jekyll 4.4.1 + Rouge 4.7.0 的 Liquid {% highlight %} 行号/行高亮标签、Kramdown 围栏代码块与标准 diff 补丁着色。" />
+    
+    <link rel="stylesheet" href="/jekyll/assets/vendor/katex.min.css" />
+    <link rel="stylesheet" href="/jekyll/assets/css/style.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('jekyll-benchmark-theme');
+          var attr = document.documentElement.getAttribute('data-theme');
+          if (attr === 'dark' || (saved === 'dark')) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/jekyll/">
+        <span>Jekyll 基准实测站</span>
+        <span class="version-pill">v4.4.1 · Ruby + Kramdown</span>
+        <span class="pioneer-pill">2008 SSG Pioneer</span>
+      </a>
+      <div class="topbar-actions">
+        <a href="https://page.2401.xyz/" target="_top">对比总站</a>
+        <a href="https://github.com/page2401/jekyll" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-btn" id="jekyll-theme-toggle" type="button">切换深浅色</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" aria-label="基准测试章节导航">
+        <div class="nav-group-label">基准章节 (_data/nav.yml)</div>
+        <ul class="nav-list">
+          
+          <li>
+            <a class="nav-link" href="/jekyll/">
+              00. 概览与版本档案
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/03-math/">
+              03. 数学公式排版
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+            
+            <div class="nav-subgroup">
+              
+              <div class="nav-subgroup-label">嵌套子目录 (nested)</div>
+              
+              <ul class="nav-sublist">
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/01-order-and-url/">
+                    嵌套子页 A：排序前缀与 URL 纯净度权衡
+                  </a>
+                </li>
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/02-sidebar-sync/">
+                    嵌套子页 B：多级子目录与侧边栏同步机制
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link active" href="/jekyll/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+            
+          </li>
+          
+        </ul>
+      </aside>
+
+      <main class="main-content" id="jekyll-prose">
+        <div class="meta-banner">
+          <span>Layout: <strong>_layouts/default.html</strong></span>
+          <span>·</span>
+          <span>Parser: <strong>Kramdown 2.6.1 (GFM) + Rouge 4.7.0</strong></span>
+        </div>
+        <h1 id="05-高阶代码块与语法高亮jekyll-liquid-highlight--rouge-470">05. 高阶代码块与语法高亮（Jekyll Liquid <code class="language-plaintext highlighter-rouge">highlight</code> + Rouge <code class="language-plaintext highlighter-rouge">4.7.0</code>）</h1>
+
+<p>技术文档中超过 40% 的篇幅由代码块构成，但标准 CommonMark / GitHub Flavored Markdown <strong>仅定义了围栏语言标识（<code class="language-plaintext highlighter-rouge">```ts</code>）</strong>，并未定义文件名标题栏、指定行高亮、带语法着色的行级 Diff 以及多语言 Tab 代码组。本文件由标准 GFM 母版派生适配至 <strong>Jekyll (<code class="language-plaintext highlighter-rouge">jekyll@4.4.1</code> + <code class="language-plaintext highlighter-rouge">kramdown@2.6.1</code> + <code class="language-plaintext highlighter-rouge">rouge@4.7.0</code>)</strong>。</p>
+
+<h2 id="1-代码块文件名标题栏与基础语法高亮liquid-highlight-vs-围栏块">1. 代码块文件名标题栏与基础语法高亮（Liquid <code class="language-plaintext highlighter-rouge">highlight</code> vs 围栏块）</h2>
+
+<p>Jekyll 使用纯 Ruby 编写的 <strong>Rouge</strong>（复用 Pygments 经典 <code class="language-plaintext highlighter-rouge">.k</code> / <code class="language-plaintext highlighter-rouge">.nf</code> / <code class="language-plaintext highlighter-rouge">.s2</code> CSS Token 类名规范）完成零运行时服务端语法高亮，并同时支持两套入口：</p>
+
+<ol>
+  <li><strong>标准 GFM 三反引号围栏（<code class="language-plaintext highlighter-rouge">```ts</code>）</strong>：经 <code class="language-plaintext highlighter-rouge">kramdown-parser-gfm</code> 解析输出 <code class="language-plaintext highlighter-rouge">&lt;div class="language-ts highlighter-rouge"&gt;&lt;div class="highlight"&gt;&lt;pre&gt;...&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</code>，不支持在围栏首行追加 <code class="language-plaintext highlighter-rouge">title="..."</code> 或 <code class="language-plaintext highlighter-rouge">{1,3}</code> 元数据；若需文件名角标，可利用 Kramdown <code class="language-plaintext highlighter-rouge">{: .code-filename}</code> 行内属性列表修饰紧邻上方的文件名段落。</li>
+  <li><strong>经典 Liquid 标签 <code class="language-plaintext highlighter-rouge">{% highlight typescript linenos %}</code></strong>：Jekyll 自 2008 年延续至今的招牌语法，构建期直出 <code class="language-plaintext highlighter-rouge">&lt;figure class="highlight"&gt;</code> 与双列 <code class="language-plaintext highlighter-rouge">&lt;table class="rouge-table"&gt;</code> 行号结构（注意：若该代码块内部包含双花括号或百分号模板语法，内部还须套一层 <code class="language-plaintext highlighter-rouge">{% raw %}</code> 防求值！）：</li>
+</ol>
+
+<p class="code-filename"><code class="language-plaintext highlighter-rouge">scripts/resolve-route.ts</code></p>
+
+<figure class="highlight"><pre><code class="language-typescript" data-lang="typescript"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="code"><pre><span class="k">export</span> <span class="kr">interface</span> <span class="nx">RouteContext</span> <span class="p">{</span>
+  <span class="nl">basePath</span><span class="p">:</span> <span class="kr">string</span>
+  <span class="nx">slug</span><span class="p">:</span> <span class="kr">string</span>
+  <span class="nx">cleanUrls</span><span class="p">:</span> <span class="nx">boolean</span>
+<span class="p">}</span>
+
+<span class="k">export</span> <span class="kd">function</span> <span class="nf">formatDocRoute</span><span class="p">(</span><span class="nx">ctx</span><span class="p">:</span> <span class="nx">RouteContext</span><span class="p">):</span> <span class="kr">string</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">prefix</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">basePath</span><span class="p">.</span><span class="nf">endsWith</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">)</span> <span class="p">?</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">basePath</span> <span class="p">:</span> <span class="s2">`</span><span class="p">${</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">basePath</span><span class="p">}</span><span class="s2">/`</span>
+  <span class="kd">const</span> <span class="nx">normalized</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">slug</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sr">/^</span><span class="se">\/</span><span class="sr">+|</span><span class="se">\/</span><span class="sr">+$/g</span><span class="p">,</span> <span class="dl">''</span><span class="p">)</span>
+  <span class="k">if </span><span class="p">(</span><span class="o">!</span><span class="nx">normalized</span> <span class="o">||</span> <span class="nx">normalized</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">index</span><span class="dl">'</span><span class="p">)</span> <span class="k">return</span> <span class="nx">prefix</span>
+  <span class="k">return</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">cleanUrls</span> <span class="p">?</span> <span class="s2">`</span><span class="p">${</span><span class="nx">prefix</span><span class="p">}${</span><span class="nx">normalized</span><span class="p">}</span><span class="s2">/`</span> <span class="p">:</span> <span class="s2">`</span><span class="p">${</span><span class="nx">prefix</span><span class="p">}${</span><span class="nx">normalized</span><span class="p">}</span><span class="s2">.html`</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<p>对比下方保持母版纯净写法的标准 <code class="language-plaintext highlighter-rouge">```ts</code> 围栏块（同样由 Rouge 静态分词，但不生成行号表格）：</p>
+
+<div class="language-ts highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nf">isCleanDirectoryRoute</span><span class="p">(</span><span class="nx">route</span><span class="p">:</span> <span class="kr">string</span><span class="p">):</span> <span class="nx">boolean</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="nx">route</span><span class="p">.</span><span class="nf">endsWith</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">route</span><span class="p">.</span><span class="nf">endsWith</span><span class="p">(</span><span class="dl">'</span><span class="s1">/index.html</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="2-关键行聚焦与高亮jekyll-4-mark_lines-参数">2. 关键行聚焦与高亮（Jekyll 4 <code class="language-plaintext highlighter-rouge">mark_lines</code> 参数）</h2>
+
+<p>Jekyll 4 为内置 <code class="language-plaintext highlighter-rouge">{% highlight %}</code> 标签新增了原生 <code class="language-plaintext highlighter-rouge">mark_lines="3 7 8 9"</code> 参数（注意：<strong>不支持 <code class="language-plaintext highlighter-rouge">7-9</code> 连字符简写</strong>，需逐行以空格列出 <code class="language-plaintext highlighter-rouge">3 7 8 9</code>），底层调用 <code class="language-plaintext highlighter-rouge">Rouge::Formatters::HTMLHighlightLines</code> 为目标行包裹 <code class="language-plaintext highlighter-rouge">&lt;span class="hll"&gt;</code>：</p>
+
+<p class="code-filename"><code class="language-plaintext highlighter-rouge">bench.config.json</code></p>
+
+<figure class="highlight"><pre><code class="language-json" data-lang="json"><table class="rouge-table"><tbody><tr><td class="gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="code"><pre><span class="p">{</span>
+<span class="w">  </span><span class="nl">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ssg-benchmark"</span><span class="p">,</span>
+<span class="hll"><span class="w">  </span><span class="nl">"routeStyle"</span><span class="p">:</span><span class="w"> </span><span class="s2">"clean"</span><span class="p">,</span>
+</span><span class="w">  </span><span class="nl">"strictZeroCdn"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nl">"markdown"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nl">"mathEngine"</span><span class="p">:</span><span class="w"> </span><span class="s2">"katex"</span><span class="p">,</span>
+<span class="hll"><span class="w">    </span><span class="nl">"diagramEngine"</span><span class="p">:</span><span class="w"> </span><span class="s2">"mermaid"</span><span class="p">,</span>
+</span><span class="hll"><span class="w">    </span><span class="nl">"lineHighlight"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span class="hll"><span class="w">    </span><span class="nl">"codeTransformers"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"diff"</span><span class="p">,</span><span class="w"> </span><span class="s2">"focus"</span><span class="p">]</span>
+</span><span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+
+</pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="3-代码增删对比着色rouge-diff-词法分析器">3. 代码增删对比着色（Rouge <code class="language-plaintext highlighter-rouge">diff</code> 词法分析器）</h2>
+
+<p>与 Pygments 高度同源，Rouge 内置 <code class="language-plaintext highlighter-rouge">Rouge::Lexers::Diff</code> 处理标准 <code class="language-plaintext highlighter-rouge">```diff</code> 围栏块，将删除行包裹为 <code class="language-plaintext highlighter-rouge">&lt;span class="gd"&gt;</code>、新增行包裹为 <code class="language-plaintext highlighter-rouge">&lt;span class="gi"&gt;</code>（兼容 GitHub 原版写法，但不保留底层 TypeScript 语法高亮）：</p>
+
+<div class="language-diff highlighter-rouge"><div class="highlight"><pre class="highlight"><code> export function mountSubsite(baseDir: string, subPath: string): string | null {
+<span class="gd">-  const cleanRel = decodeURIComponent(subPath).replace(/\.\./g, '')
+-  return `${baseDir}/${cleanRel}`
+</span><span class="gi">+  const resolvedBase = path.resolve(baseDir)
++  const target = path.resolve(resolvedBase, decodeURIComponent(subPath).replace(/^\/+/, ''))
++  return target.startsWith(`${resolvedBase}${path.sep}`) ? target : null
+</span> }
+</code></pre></div></div>
+
+<h2 id="4-多语言运行时命令组kramdown-details-markdown1-零脚本折叠组">4. 多语言运行时命令组（Kramdown <code class="language-plaintext highlighter-rouge">&lt;details markdown="1"&gt;</code> 零脚本折叠组）</h2>
+
+<p>Jekyll 核心与 Kramdown 均未内置多语言横向 Tab 语法（亦无法像 MDX 框架那样直接在 Markdown 中 <code class="language-plaintext highlighter-rouge">import &lt;Tabs&gt;</code> 组件）；在不引入客户端切换脚本的前提下，最地道的原生做法是使用声明了 <code class="language-plaintext highlighter-rouge">markdown="1"</code> 的语义化 <code class="language-plaintext highlighter-rouge">&lt;details&gt;</code> 折叠组：</p>
+
+<details open="">
+  <summary>Node.js (<code>package.json</code>)</summary>
+
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm ci <span class="o">&amp;&amp;</span> npm run build
+</code></pre></div>  </div>
+
+</details>
+
+<details>
+  <summary>Deno 2 (<code>deno.json</code>)</summary>
+
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>deno task build
+</code></pre></div>  </div>
+
+</details>
+
+<details>
+  <summary>Python (<code>requirements.txt</code>)</summary>
+
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install</span> <span class="nt">-r</span> requirements.txt <span class="o">&amp;&amp;</span> sphinx-build <span class="nt">-b</span> dirhtml <span class="nb">.</span> _build/dirhtml
+</code></pre></div>  </div>
+
+</details>
+
+<details>
+  <summary>Ruby (<code>Gemfile</code>)</summary>
+
+  <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bundle <span class="nb">install</span> <span class="o">&amp;&amp;</span> bundle <span class="nb">exec </span>jekyll build
+</code></pre></div>  </div>
+
+</details>
+
+<h2 id="5-四大底层高亮引擎能力对照小结">5. 四大底层高亮引擎能力对照小结</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">高亮引擎代表</th>
+      <th style="text-align: left">典型采用框架</th>
+      <th style="text-align: left">构建期零运行时 JS</th>
+      <th style="text-align: left">原生行号 / 行高亮</th>
+      <th style="text-align: left">保留词法着色的 Diff</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>Shiki / Expressive Code</strong></td>
+      <td style="text-align: left">VitePress、Starlight、Fumadocs、Nextra、Rspress、Nuxt、Quartz</td>
+      <td style="text-align: left">✅ 纯静态内联样式</td>
+      <td style="text-align: left">✅ <code class="language-plaintext highlighter-rouge">{1,3-5}</code> / <code class="language-plaintext highlighter-rouge">[!code highlight]</code></td>
+      <td style="text-align: left">✅ <code class="language-plaintext highlighter-rouge">// [!code ++]</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Prism.js</strong></td>
+      <td style="text-align: left">Docusaurus、VuePress、Eleventy (plugin)、Gatsby</td>
+      <td style="text-align: left">✅ 静态 Token 类名</td>
+      <td style="text-align: left">✅ <code class="language-plaintext highlighter-rouge">{1,3-5}</code> / 魔法注释</td>
+      <td style="text-align: left">⚠️ 需配 diff-highlight 插件</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Pygments / Rouge</strong></td>
+      <td style="text-align: left">MkDocs Material、Sphinx、Pelican、Jekyll</td>
+      <td style="text-align: left">✅ Python/Ruby 编译直出</td>
+      <td style="text-align: left">✅ <code class="language-plaintext highlighter-rouge">hl_lines</code> / <code class="language-plaintext highlighter-rouge">emphasize-lines</code></td>
+      <td style="text-align: left">⚠️ 仅标准 <code class="language-plaintext highlighter-rouge">diff</code> 块红绿</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Chroma / Giallo / hljs</strong></td>
+      <td style="text-align: left">Hugo (Go Chroma)、Zola (Rust Giallo)、mdBook (hljs)</td>
+      <td style="text-align: left">✅ (mdBook 为客户端 hljs)</td>
+      <td style="text-align: left">✅ Hugo/Zola 原生 <code class="language-plaintext highlighter-rouge">hl_lines</code></td>
+      <td style="text-align: left">⚠️ 仅标准 <code class="language-plaintext highlighter-rouge">diff</code> 块红绿</td>
+    </tr>
+  </tbody>
+</table>
+
+      </main>
+
+      <aside class="toc-aside" id="jekyll-toc-aside">
+        <div class="toc-title">本页目录</div>
+        <ul class="toc-list" id="jekyll-toc-list"></ul>
+      </aside>
+    </div>
+
+    <script src="/jekyll/assets/vendor/katex.min.js"></script>
+    <script src="/jekyll/assets/vendor/auto-render.min.js"></script>
+    <script src="/jekyll/assets/vendor/mermaid.min.js"></script>
+    <script src="/jekyll/assets/js/site.js"></script>
+  </body>
+</html>

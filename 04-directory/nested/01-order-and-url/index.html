@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>嵌套子页 A：排序前缀与 URL 纯净度权衡 · Jekyll 基准实测站</title>
+    
+    <link rel="stylesheet" href="/jekyll/assets/vendor/katex.min.css" />
+    <link rel="stylesheet" href="/jekyll/assets/css/style.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('jekyll-benchmark-theme');
+          var attr = document.documentElement.getAttribute('data-theme');
+          if (attr === 'dark' || (saved === 'dark')) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/jekyll/">
+        <span>Jekyll 基准实测站</span>
+        <span class="version-pill">v4.4.1 · Ruby + Kramdown</span>
+        <span class="pioneer-pill">2008 SSG Pioneer</span>
+      </a>
+      <div class="topbar-actions">
+        <a href="https://page.2401.xyz/" target="_top">对比总站</a>
+        <a href="https://github.com/page2401/jekyll" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-btn" id="jekyll-theme-toggle" type="button">切换深浅色</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" aria-label="基准测试章节导航">
+        <div class="nav-group-label">基准章节 (_data/nav.yml)</div>
+        <ul class="nav-list">
+          
+          <li>
+            <a class="nav-link" href="/jekyll/">
+              00. 概览与版本档案
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/03-math/">
+              03. 数学公式排版
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+            
+            <div class="nav-subgroup">
+              
+              <div class="nav-subgroup-label">嵌套子目录 (nested)</div>
+              
+              <ul class="nav-sublist">
+                
+                <li>
+                  <a class="nav-link active" href="/jekyll/04-directory/nested/01-order-and-url/">
+                    嵌套子页 A：排序前缀与 URL 纯净度权衡
+                  </a>
+                </li>
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/02-sidebar-sync/">
+                    嵌套子页 B：多级子目录与侧边栏同步机制
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+            
+          </li>
+          
+        </ul>
+      </aside>
+
+      <main class="main-content" id="jekyll-prose">
+        <div class="meta-banner">
+          <span>Layout: <strong>_layouts/default.html</strong></span>
+          <span>·</span>
+          <span>Parser: <strong>Kramdown 2.6.1 (GFM) + Rouge 4.7.0</strong></span>
+        </div>
+        <h1 id="嵌套子页-a排序前缀与-url-纯净度权衡">嵌套子页 A：排序前缀与 URL 纯净度权衡</h1>
+
+<p>在 Jekyll 中开启 <code class="language-plaintext highlighter-rouge">permalink: pretty</code> 后，<code class="language-plaintext highlighter-rouge">04-directory/nested/01-order-and-url.md</code> 会被编译为 <code class="language-plaintext highlighter-rouge">_site/04-directory/nested/01-order-and-url/index.html</code>（对应路由 <code class="language-plaintext highlighter-rouge">/jekyll/04-directory/nested/01-order-and-url/</code>）。保留 <code class="language-plaintext highlighter-rouge">01-</code> 文件名前缀能够让本地 IDE 与 Git 仓库按阅读顺序直观排列，但序号也会原样进入线上 URL（除非逐篇在 Frontmatter 手写 <code class="language-plaintext highlighter-rouge">permalink:</code> 覆盖）。</p>
+
+<ul>
+  <li><a href="/jekyll/04-directory/">返回上级：《04. 目录结构与路由取舍》</a></li>
+  <li><a href="/jekyll/04-directory/nested/02-sidebar-sync/">下一篇：《嵌套子页 B：多级子目录与侧边栏同步机制》</a></li>
+</ul>
+
+      </main>
+
+      <aside class="toc-aside" id="jekyll-toc-aside">
+        <div class="toc-title">本页目录</div>
+        <ul class="toc-list" id="jekyll-toc-list"></ul>
+      </aside>
+    </div>
+
+    <script src="/jekyll/assets/vendor/katex.min.js"></script>
+    <script src="/jekyll/assets/vendor/auto-render.min.js"></script>
+    <script src="/jekyll/assets/vendor/mermaid.min.js"></script>
+    <script src="/jekyll/assets/js/site.js"></script>
+  </body>
+</html>

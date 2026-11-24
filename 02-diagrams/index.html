@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02. 流程图与时序图 · Jekyll 基准实测站</title>
+    
+    <meta name="description" content="Jekyll 4.4.1 (Kramdown + Rouge) 零改动保留母版 mermaid 围栏代码块并挂载本地 mermaid@12.3.0 渲染。" />
+    
+    <link rel="stylesheet" href="/jekyll/assets/vendor/katex.min.css" />
+    <link rel="stylesheet" href="/jekyll/assets/css/style.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('jekyll-benchmark-theme');
+          var attr = document.documentElement.getAttribute('data-theme');
+          if (attr === 'dark' || (saved === 'dark')) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/jekyll/">
+        <span>Jekyll 基准实测站</span>
+        <span class="version-pill">v4.4.1 · Ruby + Kramdown</span>
+        <span class="pioneer-pill">2008 SSG Pioneer</span>
+      </a>
+      <div class="topbar-actions">
+        <a href="https://page.2401.xyz/" target="_top">对比总站</a>
+        <a href="https://github.com/page2401/jekyll" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-btn" id="jekyll-theme-toggle" type="button">切换深浅色</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" aria-label="基准测试章节导航">
+        <div class="nav-group-label">基准章节 (_data/nav.yml)</div>
+        <ul class="nav-list">
+          
+          <li>
+            <a class="nav-link" href="/jekyll/">
+              00. 概览与版本档案
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link active" href="/jekyll/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/03-math/">
+              03. 数学公式排版
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+            
+            <div class="nav-subgroup">
+              
+              <div class="nav-subgroup-label">嵌套子目录 (nested)</div>
+              
+              <ul class="nav-sublist">
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/01-order-and-url/">
+                    嵌套子页 A：排序前缀与 URL 纯净度权衡
+                  </a>
+                </li>
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/02-sidebar-sync/">
+                    嵌套子页 B：多级子目录与侧边栏同步机制
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+            
+          </li>
+          
+        </ul>
+      </aside>
+
+      <main class="main-content" id="jekyll-prose">
+        <div class="meta-banner">
+          <span>Layout: <strong>_layouts/default.html</strong></span>
+          <span>·</span>
+          <span>Parser: <strong>Kramdown 2.6.1 (GFM) + Rouge 4.7.0</strong></span>
+        </div>
+        <h1 id="02-流程图与时序图kramdown--本地-mermaid-123">02. 流程图与时序图（Kramdown + 本地 Mermaid 12.3）</h1>
+
+<p>在 Jekyll (<code class="language-plaintext highlighter-rouge">jekyll@4.4.1</code>) 中，当 Kramdown 遇到 <code class="language-plaintext highlighter-rouge">```mermaid</code> 围栏代码块且 <code class="language-plaintext highlighter-rouge">rouge@4.7.0</code> 未接管或回退为 <code class="language-plaintext highlighter-rouge">&lt;pre&gt;&lt;code class="language-mermaid"&gt;</code> 时，文档正文<strong>无需任何自定义 Liquid 标签改动</strong>，即可由同源托管的 <code class="language-plaintext highlighter-rouge">assets/vendor/mermaid.min.js</code>（<code class="language-plaintext highlighter-rouge">v12.3.0</code>）在客户端转换为响应式 SVG 图表，并随深浅色主题实时重绘。</p>
+
+<h2 id="1-复杂子图与架构流程图flowchart-td">1. 复杂子图与架构流程图（<code class="language-plaintext highlighter-rouge">flowchart TD</code>）</h2>
+
+<p>测试中文节点标签、子图嵌套（<code class="language-plaintext highlighter-rouge">subgraph</code>）、虚线边与条件分支：</p>
+
+<pre><code class="language-mermaid">flowchart TD
+    subgraph MainRepo["主仓库 page2401.github.io"]
+        Master["母版 docs/*.md (Pure GFM)"]
+        SubPtr["Git Submodule 指针 (sites/*)"]
+        Workbench["对比工作台源码 (main)"]
+    end
+
+    subgraph SubRepo["各独立派生子仓库 (sites/&lt;id&gt;)"]
+        SrcBranch["main 分支: 框架配置 + 派生适配版 *.md"]
+        Actions{"GitHub Actions 构建"}
+        PageBranch["page 孤儿分支: 纯静态产物 + .nojekyll"]
+        SrcBranch --&gt; Actions
+        Actions --&gt;|"自动构建发布"| PageBranch
+    end
+
+    Master -.-&gt;|"按各框架方言派生"| SrcBranch
+    SubPtr -.-&gt;|"跟踪 main 分支"| SrcBranch
+    Workbench --&gt;|"对比母版与各派生版差异"| Portal["https://page.2401.xyz/"]
+    PageBranch --&gt;|"GitHub Organization Pages"| SubSite["https://page.2401.xyz/&lt;id&gt;/"]
+</code></pre>
+
+<h2 id="2-编译管线交互时序图sequencediagram">2. 编译管线交互时序图（<code class="language-plaintext highlighter-rouge">sequenceDiagram</code>）</h2>
+
+<p>测试多参与者生命线、<code class="language-plaintext highlighter-rouge">alt</code> 分支块及激活框（<code class="language-plaintext highlighter-rouge">activate</code>/<code class="language-plaintext highlighter-rouge">deactivate</code>）：</p>
+
+<pre><code class="language-mermaid">sequenceDiagram
+    autonumber
+    actor Author as 文档作者
+    participant Master as 主仓母版 docs/*.md
+    participant SubGit as 子模块 main 分支
+    participant CI as GitHub Actions (Node 22)
+    participant Pages as GitHub Pages (page 分支)
+
+    Author-&gt;&gt;Master: 编写标准 GFM 基准母版
+    Master-&gt;&gt;SubGit: 派生适配特定 SSG 版本语法
+    SubGit-&gt;&gt;CI: 触发 deploy-page.yml 工作流
+    activate CI
+    alt 编译型 SSG (VitePress / VuePress / Starlight)
+        CI-&gt;&gt;CI: 预编译静态 HTML + 公式 + 图表挂载点
+    else 运行时引擎 (Docsify v4 / v5)
+        CI-&gt;&gt;CI: 组装原始 *.md + _sidebar.md + 锁定版本 vendor
+    end
+    CI-&gt;&gt;Pages: force_orphan 推送至孤儿分支 page
+    deactivate CI
+    Pages--&gt;&gt;Author: 同源子路径 /&lt;id&gt;/ 即刻生效
+</code></pre>
+
+<h2 id="3-子模块同步状态机statediagram-v2">3. 子模块同步状态机（<code class="language-plaintext highlighter-rouge">stateDiagram-v2</code>）</h2>
+
+<p>测试状态机语法与状态迁移说明标签：</p>
+
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; MasterEdited: 更新主仓母版 docs/*.md
+    MasterEdited --&gt; SubmoduleDerived: 同步派生适配至各子模块 *.md
+    SubmoduleDerived --&gt; SubmodulePushed: 子模块 commit &amp; push origin main
+    SubmodulePushed --&gt; PageDeploying: 子仓库 Actions 自动更新 page 分支
+    SubmodulePushed --&gt; MainRepoUpdated: 主仓库更新子模块指针并构建对比数据
+    PageDeploying --&gt; LiveSynced: 线上渲染与母版源码差异视图全部就绪
+    MainRepoUpdated --&gt; LiveSynced: 计算相对母版改动行数完成
+    LiveSynced --&gt; [*]
+</code></pre>
+
+      </main>
+
+      <aside class="toc-aside" id="jekyll-toc-aside">
+        <div class="toc-title">本页目录</div>
+        <ul class="toc-list" id="jekyll-toc-list"></ul>
+      </aside>
+    </div>
+
+    <script src="/jekyll/assets/vendor/katex.min.js"></script>
+    <script src="/jekyll/assets/vendor/auto-render.min.js"></script>
+    <script src="/jekyll/assets/vendor/mermaid.min.js"></script>
+    <script src="/jekyll/assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>04. 目录结构与路由取舍 · Jekyll 基准实测站</title>
+    
+    <meta name="description" content="实测 Jekyll 下划线系统目录约定（.nojekyll 的历史根源）、_data/nav.yml 数据文件侧边栏与 {% link %} 编译期死链校验。" />
+    
+    <link rel="stylesheet" href="/jekyll/assets/vendor/katex.min.css" />
+    <link rel="stylesheet" href="/jekyll/assets/css/style.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('jekyll-benchmark-theme');
+          var attr = document.documentElement.getAttribute('data-theme');
+          if (attr === 'dark' || (saved === 'dark')) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/jekyll/">
+        <span>Jekyll 基准实测站</span>
+        <span class="version-pill">v4.4.1 · Ruby + Kramdown</span>
+        <span class="pioneer-pill">2008 SSG Pioneer</span>
+      </a>
+      <div class="topbar-actions">
+        <a href="https://page.2401.xyz/" target="_top">对比总站</a>
+        <a href="https://github.com/page2401/jekyll" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-btn" id="jekyll-theme-toggle" type="button">切换深浅色</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" aria-label="基准测试章节导航">
+        <div class="nav-group-label">基准章节 (_data/nav.yml)</div>
+        <ul class="nav-list">
+          
+          <li>
+            <a class="nav-link" href="/jekyll/">
+              00. 概览与版本档案
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/03-math/">
+              03. 数学公式排版
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link active" href="/jekyll/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+            
+            <div class="nav-subgroup">
+              
+              <div class="nav-subgroup-label">嵌套子目录 (nested)</div>
+              
+              <ul class="nav-sublist">
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/01-order-and-url/">
+                    嵌套子页 A：排序前缀与 URL 纯净度权衡
+                  </a>
+                </li>
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/02-sidebar-sync/">
+                    嵌套子页 B：多级子目录与侧边栏同步机制
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+            
+          </li>
+          
+        </ul>
+      </aside>
+
+      <main class="main-content" id="jekyll-prose">
+        <div class="meta-banner">
+          <span>Layout: <strong>_layouts/default.html</strong></span>
+          <span>·</span>
+          <span>Parser: <strong>Kramdown 2.6.1 (GFM) + Rouge 4.7.0</strong></span>
+        </div>
+        <h1 id="04-目录结构与路由取舍_datanavyml---link-">04. 目录结构与路由取舍（<code class="language-plaintext highlighter-rouge">_data/nav.yml</code> + <code class="language-plaintext highlighter-rouge">{% link %}</code>）</h1>
+
+<p>作为 2008 年诞生的静态网站生成器鼻祖，Jekyll 定义了深刻影响整个 GitHub Pages 生态的<strong>“根目录扫描 + 下划线 <code class="language-plaintext highlighter-rouge">_</code> 私有系统目录”</strong>模型。将母版 <code class="language-plaintext highlighter-rouge">docs/04-directory/</code> 派生至 Jekyll 4.4 时呈现出以下标志性工程特征：</p>
+
+<ol>
+  <li><strong>为什么现代框架都必须放置 <code class="language-plaintext highlighter-rouge">.nojekyll</code>？</strong>：Jekyll 默认把仓库根目录视为站点源，并将一切以下划线 <code class="language-plaintext highlighter-rouge">_</code> 开头的路径（<code class="language-plaintext highlighter-rouge">_layouts/</code>、<code class="language-plaintext highlighter-rouge">_includes/</code>、<code class="language-plaintext highlighter-rouge">_data/</code>、<code class="language-plaintext highlighter-rouge">_posts/</code>、<code class="language-plaintext highlighter-rouge">_site/</code>）当作内部编译源码而拒绝作为静态文件发布——这正是 Astro（<code class="language-plaintext highlighter-rouge">/_astro/</code>）、Next.js（<code class="language-plaintext highlighter-rouge">/_next/</code>）与 Docsify（<code class="language-plaintext highlighter-rouge">_sidebar.md</code>）在 GitHub Pages 部署时一旦漏放 <code class="language-plaintext highlighter-rouge">.nojekyll</code> 就会全站 404 的历史根源！</li>
+  <li><strong>根级混居与 <code class="language-plaintext highlighter-rouge">exclude</code> 黑名单</strong>：由于文档直接平铺在仓库根目录，必须在 <code class="language-plaintext highlighter-rouge">_config.yml</code> 的 <code class="language-plaintext highlighter-rouge">exclude</code> 数组中显式屏蔽 <code class="language-plaintext highlighter-rouge">README.md</code>、<code class="language-plaintext highlighter-rouge">Gemfile</code>、<code class="language-plaintext highlighter-rouge">Gemfile.lock</code> 与本地 <code class="language-plaintext highlighter-rouge">vendor/</code>，否则这些工程文件会被误编译进最终发布的 <code class="language-plaintext highlighter-rouge">_site/</code>。</li>
+  <li><strong><code class="language-plaintext highlighter-rouge">_data/nav.yml</code> 数据驱动侧边栏与 <code class="language-plaintext highlighter-rouge">{% link %}</code> 标签</strong>：
+    <ul>
+      <li>Jekyll 核心不内置文档侧边栏自动生成，最地道的做法是在 <code class="language-plaintext highlighter-rouge">_data/nav.yml</code> 中维护结构化 YAML 导航树（通过 <code class="language-plaintext highlighter-rouge">site.data.nav</code> 注入模板），既能自由赋予 <code class="language-plaintext highlighter-rouge">nested/</code> 中文分组标题，又避免在文档目录内散落元数据文件；</li>
+      <li>原生 Kramdown 不会自动将 <code class="language-plaintext highlighter-rouge">[...](./nested/01-order-and-url.md)</code> 重写为网页路由，改用 Jekyll 4 内置的 <code class="language-plaintext highlighter-rouge">{% link 04-directory/nested/01-order-and-url.md %}</code> 标签后，编译器不仅会自动拼接 <code class="language-plaintext highlighter-rouge">baseurl</code>（<code class="language-plaintext highlighter-rouge">/jekyll</code>）与 <code class="language-plaintext highlighter-rouge">permalink: pretty</code> 路径，还会在目标文件改名缺失时直接中断构建报错（代价是离线编辑器无法直接点击跳转）。</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="嵌套子文档入口经--link--编译期死链校验">嵌套子文档入口（经 <code class="language-plaintext highlighter-rouge">{% link %}</code> 编译期死链校验）</h2>
+
+<ul>
+  <li><a href="/jekyll/04-directory/nested/01-order-and-url/">进入子文档 A：排序前缀与 URL 纯净度权衡</a></li>
+  <li><a href="/jekyll/04-directory/nested/02-sidebar-sync/">进入子文档 B：多级子目录与侧边栏同步机制</a></li>
+</ul>
+
+      </main>
+
+      <aside class="toc-aside" id="jekyll-toc-aside">
+        <div class="toc-title">本页目录</div>
+        <ul class="toc-list" id="jekyll-toc-list"></ul>
+      </aside>
+    </div>
+
+    <script src="/jekyll/assets/vendor/katex.min.js"></script>
+    <script src="/jekyll/assets/vendor/auto-render.min.js"></script>
+    <script src="/jekyll/assets/vendor/mermaid.min.js"></script>
+    <script src="/jekyll/assets/js/site.js"></script>
+  </body>
+</html>

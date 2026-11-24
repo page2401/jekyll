@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jekyll 基准实测站</title>
+    
+    <meta name="description" content="静态网站生成器开山鼻祖 Jekyll (v4.4.1 · Ruby + Liquid + Kramdown + Rouge) 基准实测子站。" />
+    
+    <link rel="stylesheet" href="/jekyll/assets/vendor/katex.min.css" />
+    <link rel="stylesheet" href="/jekyll/assets/css/style.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('jekyll-benchmark-theme');
+          var attr = document.documentElement.getAttribute('data-theme');
+          if (attr === 'dark' || (saved === 'dark')) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/jekyll/">
+        <span>Jekyll 基准实测站</span>
+        <span class="version-pill">v4.4.1 · Ruby + Kramdown</span>
+        <span class="pioneer-pill">2008 SSG Pioneer</span>
+      </a>
+      <div class="topbar-actions">
+        <a href="https://page.2401.xyz/" target="_top">对比总站</a>
+        <a href="https://github.com/page2401/jekyll" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-btn" id="jekyll-theme-toggle" type="button">切换深浅色</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" aria-label="基准测试章节导航">
+        <div class="nav-group-label">基准章节 (_data/nav.yml)</div>
+        <ul class="nav-list">
+          
+          <li>
+            <a class="nav-link active" href="/jekyll/">
+              00. 概览与版本档案
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/03-math/">
+              03. 数学公式排版
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+            
+            <div class="nav-subgroup">
+              
+              <div class="nav-subgroup-label">嵌套子目录 (nested)</div>
+              
+              <ul class="nav-sublist">
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/01-order-and-url/">
+                    嵌套子页 A：排序前缀与 URL 纯净度权衡
+                  </a>
+                </li>
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/02-sidebar-sync/">
+                    嵌套子页 B：多级子目录与侧边栏同步机制
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+            
+          </li>
+          
+        </ul>
+      </aside>
+
+      <main class="main-content" id="jekyll-prose">
+        <div class="meta-banner">
+          <span>Layout: <strong>_layouts/default.html</strong></span>
+          <span>·</span>
+          <span>Parser: <strong>Kramdown 2.6.1 (GFM) + Rouge 4.7.0</strong></span>
+        </div>
+        <h1 id="jekyll-441--ruby--kramdown-基准实测子站">Jekyll (<code class="language-plaintext highlighter-rouge">4.4.1</code> · Ruby + Kramdown) 基准实测子站</h1>
+
+<p>本子模块由主仓 <code class="language-plaintext highlighter-rouge">page2401.github.io/docs/</code> 标准 GFM 母版<strong>最小化派生适配</strong>而来，实测静态网站生成器开山鼻祖与 GitHub Pages 历史默认引擎 <strong>Jekyll (<code class="language-plaintext highlighter-rouge">jekyll@4.4.1</code>)</strong> 在 <strong>Ruby 3.2 + Bundler</strong>、<strong>Shopify Liquid (<code class="language-plaintext highlighter-rouge">4.0.4</code>) 模板管线</strong>、<strong>Kramdown (<code class="language-plaintext highlighter-rouge">2.6.1</code>) 行内属性列表 <code class="language-plaintext highlighter-rouge">{: .class}</code></strong> 以及 <code class="language-plaintext highlighter-rouge">_layouts/</code> / <code class="language-plaintext highlighter-rouge">_includes/</code> / <code class="language-plaintext highlighter-rouge">_data/</code> 下划线系统目录体系下的真实工程表现。</p>
+
+<div class="hero-grid">
+  <div class="hero-card">
+    <h3><a href="/jekyll/01-annotations/">01. 专属标注与元数据 →</a></h3>
+    <p>双轨实测 Kramdown 招牌 <code>{: .callout}</code> 属性列表、Liquid <code>{% include callout.html %}</code> 与 <code>kramdown-parser-gfm</code> 对 GFM 警报的退化表现。</p>
+  </div>
+  <div class="hero-card">
+    <h3><a href="/jekyll/02-diagrams/">02. 流程图与时序图 →</a></h3>
+    <p>母版三段 Mermaid 围栏块零改动直通，经 Kramdown 输出 <code>code.language-mermaid</code> 并挂载本地 <code>mermaid@12.3.0</code>。</p>
+  </div>
+  <div class="hero-card">
+    <h3><a href="/jekyll/03-math/">03. 数学公式排版 →</a></h3>
+    <p>Kramdown 内置 <code>math_engine</code> 原生保护块级 <code>$$...$$</code> 为 <code>\[...\]</code>，配合本地 <code>katex@0.19.1</code> 检验单 <code>\$</code> 转义边界。</p>
+  </div>
+  <div class="hero-card">
+    <h3><a href="/jekyll/04-directory/">04. 目录结构与路由取舍 →</a></h3>
+    <p>溯源 <code>_layouts/</code>、<code>_data/nav.yml</code> 下划线目录约定（<code>.nojekyll</code> 的历史由来）与编译期死链校验标签 <code>{% link %}</code>。</p>
+  </div>
+  <div class="hero-card">
+    <h3><a href="/jekyll/05-code-blocks/">05. 高阶代码块与语法高亮 →</a></h3>
+    <p>并列实测纯 Ruby 引擎 <strong>Rouge 4.7</strong> 在 Liquid <code>{% highlight typescript linenos %}</code> 与 Kramdown GFM 围栏下的表现。</p>
+  </div>
+</div>
+
+<h2 id="精确锁定版本档案gemfile--本地静态资源">精确锁定版本档案（<code class="language-plaintext highlighter-rouge">Gemfile</code> + 本地静态资源）</h2>
+
+<p>实测发现：<strong>RubyGems 上游 <code class="language-plaintext highlighter-rouge">liquid</code>（<code class="language-plaintext highlighter-rouge">5.14.0</code>）与 <code class="language-plaintext highlighter-rouge">rouge</code>（<code class="language-plaintext highlighter-rouge">5.1.0</code>）均已演进至 v5 大版本，而 <code class="language-plaintext highlighter-rouge">jekyll@4.4.1</code> 仍锁死在 <code class="language-plaintext highlighter-rouge">liquid ~&gt; 4.0</code> 与 <code class="language-plaintext highlighter-rouge">rouge &lt; 5.0</code></strong>（若在 <code class="language-plaintext highlighter-rouge">Gemfile</code> 中不锁版本同时声明 <code class="language-plaintext highlighter-rouge">jekyll</code>、<code class="language-plaintext highlighter-rouge">liquid</code>、<code class="language-plaintext highlighter-rouge">rouge</code>，Bundler 依赖求解器甚至会将 <code class="language-plaintext highlighter-rouge">jekyll</code> 回退至 2011 年的 <code class="language-plaintext highlighter-rouge">0.11.0</code>！）；此外针对 Ruby 3.2–3.4 标准库 Gem 化拆分，须显式声明 <code class="language-plaintext highlighter-rouge">csv</code>、<code class="language-plaintext highlighter-rouge">logger</code>、<code class="language-plaintext highlighter-rouge">base64</code> 与 <code class="language-plaintext highlighter-rouge">webrick</code>。全站公式字体与图表脚本均托管于 <code class="language-plaintext highlighter-rouge">assets/vendor/</code>，零外部 CDN 请求：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">依赖包 / 资源名称</th>
+      <th style="text-align: left">精确锁定版本</th>
+      <th style="text-align: left">在本子站中的职责与实测边界</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">jekyll</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">4.4.1</code></td>
+      <td style="text-align: left">2008 年创立的 Ruby 静态站点生成器鼻祖（开启 <code class="language-plaintext highlighter-rouge">permalink: pretty</code> 干净目录路由）</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">kramdown</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">2.6.1</code></td>
+      <td style="text-align: left">纯 Ruby Markdown 超集解析器，独创 <code class="language-plaintext highlighter-rouge">{: .class}</code> 行内属性列表（IAL）与 <code class="language-plaintext highlighter-rouge">markdown="1"</code> 块解析</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">kramdown-parser-gfm</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">1.1.0</code></td>
+      <td style="text-align: left">GFM 兼容层（停更于 2019 年，早于 2023 GitHub Alerts 规范，不支持 <code class="language-plaintext highlighter-rouge">&gt; [!NOTE]</code>）</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">rouge</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">4.7.0</code></td>
+      <td style="text-align: left">纯 Ruby 构建期代码语法高亮器（受 Jekyll 4 约束上限锁定在 <code class="language-plaintext highlighter-rouge">&lt; 5.0</code> 的 <code class="language-plaintext highlighter-rouge">4.7.0</code>）</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">liquid</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">4.0.4</code></td>
+      <td style="text-align: left">Shopify 开源无逻辑安全模板引擎（提供 <code class="language-plaintext highlighter-rouge">{% include %}</code>、<code class="language-plaintext highlighter-rouge">{% link %}</code> 与 <code class="language-plaintext highlighter-rouge">relative_url</code> 过滤器）</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">jekyll-sass-converter</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">3.1.0</code></td>
+      <td style="text-align: left">内置 Dart Sass (<code class="language-plaintext highlighter-rouge">sass-embedded@1.108.2</code>) 管线，将带空 Frontmatter 的 <code class="language-plaintext highlighter-rouge">style.scss</code> 编译为 CSS</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">csv</code> / <code class="language-plaintext highlighter-rouge">logger</code> / <code class="language-plaintext highlighter-rouge">base64</code> / <code class="language-plaintext highlighter-rouge">webrick</code></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">3.3.7</code> / <code class="language-plaintext highlighter-rouge">1.7.0</code> / <code class="language-plaintext highlighter-rouge">0.3.0</code> / <code class="language-plaintext highlighter-rouge">1.9.2</code></td>
+      <td style="text-align: left">适配现代 Ruby 3.2+ 标准库外迁（Stdlib Gemification）的显式运行时依赖</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">katex</code> / <code class="language-plaintext highlighter-rouge">mermaid</code> (本地 <code class="language-plaintext highlighter-rouge">assets/vendor/</code>)</td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">0.19.1</code> / <code class="language-plaintext highlighter-rouge">12.3.0</code></td>
+      <td style="text-align: left">同源离线托管 <code class="language-plaintext highlighter-rouge">katex.min.js</code>、<code class="language-plaintext highlighter-rouge">auto-render.min.js</code>、<code class="language-plaintext highlighter-rouge">woff2</code> 字体与 <code class="language-plaintext highlighter-rouge">mermaid.min.js</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="六大标准基准章节对照">六大标准基准章节对照</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">章节路径</th>
+      <th style="text-align: left">测试维度</th>
+      <th style="text-align: left">相对母版 <code class="language-plaintext highlighter-rouge">docs/*.md</code> 的核心派生改造点</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><a href="/jekyll/01-annotations/"><code class="language-plaintext highlighter-rouge">01-annotations.md</code></a></td>
+      <td style="text-align: left">专属标注与元数据</td>
+      <td style="text-align: left">第 2 节对比 Kramdown <code class="language-plaintext highlighter-rouge">{: .callout}</code> 属性列表与 Liquid <code class="language-plaintext highlighter-rouge">{% include callout.html %}</code>；<code class="language-plaintext highlighter-rouge">&lt;details&gt;</code> 须补 <code class="language-plaintext highlighter-rouge">markdown="1"</code>；第 4 节原样保留验证 <code class="language-plaintext highlighter-rouge">&gt; [!NOTE]</code> 退化</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><a href="/jekyll/02-diagrams/"><code class="language-plaintext highlighter-rouge">02-diagrams.md</code></a></td>
+      <td style="text-align: left">流程图与时序图</td>
+      <td style="text-align: left">正文三段 Mermaid 代码块一字不改；Rouge 对未知语言回退输出 <code class="language-plaintext highlighter-rouge">&lt;code class="language-mermaid"&gt;</code> 由客户端接管</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><a href="/jekyll/03-math/"><code class="language-plaintext highlighter-rouge">03-math.md</code></a></td>
+      <td style="text-align: left">数学公式排版</td>
+      <td style="text-align: left">4 组 <code class="language-plaintext highlighter-rouge">$$...$$</code> 多行公式零反斜杠改动直出 <code class="language-plaintext highlighter-rouge">\[...\]</code>；仅第 5 节字面量 <code class="language-plaintext highlighter-rouge">\$29</code> 因 Kramdown 消费转义须改写为 <code class="language-plaintext highlighter-rouge">\\$29</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><a href="/jekyll/04-directory/"><code class="language-plaintext highlighter-rouge">04-directory/</code></a></td>
+      <td style="text-align: left">目录结构与路由取舍</td>
+      <td style="text-align: left">根目录平铺 + <code class="language-plaintext highlighter-rouge">_config.yml</code> <code class="language-plaintext highlighter-rouge">exclude</code> 隔离工程文件 + <code class="language-plaintext highlighter-rouge">_data/nav.yml</code> 数据驱动侧边栏 + <code class="language-plaintext highlighter-rouge">{% link %}</code> 内链校验</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><a href="/jekyll/05-code-blocks/"><code class="language-plaintext highlighter-rouge">05-code-blocks.md</code></a></td>
+      <td style="text-align: left">高阶代码块与语法高亮</td>
+      <td style="text-align: left">对比 Liquid <code class="language-plaintext highlighter-rouge">{% highlight typescript linenos mark_lines="..." %}</code> 与 Kramdown 围栏 <code class="language-plaintext highlighter-rouge">```ts</code> / <code class="language-plaintext highlighter-rouge">```diff</code> 在 Rouge 下的输出差异</td>
+    </tr>
+  </tbody>
+</table>
+
+      </main>
+
+      <aside class="toc-aside" id="jekyll-toc-aside">
+        <div class="toc-title">本页目录</div>
+        <ul class="toc-list" id="jekyll-toc-list"></ul>
+      </aside>
+    </div>
+
+    <script src="/jekyll/assets/vendor/katex.min.js"></script>
+    <script src="/jekyll/assets/vendor/auto-render.min.js"></script>
+    <script src="/jekyll/assets/vendor/mermaid.min.js"></script>
+    <script src="/jekyll/assets/js/site.js"></script>
+  </body>
+</html>

@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>03. 数学公式排版 · Jekyll 基准实测站</title>
+    
+    <meta name="description" content="实测 Kramdown 2.6.1 内置 $$...$$ 块级公式 AST 保护与单 $...$ 行内公式 / \$ 转义边界，配合本地 KaTeX 0.19.1 渲染。" />
+    
+    <link rel="stylesheet" href="/jekyll/assets/vendor/katex.min.css" />
+    <link rel="stylesheet" href="/jekyll/assets/css/style.css" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('jekyll-benchmark-theme');
+          var attr = document.documentElement.getAttribute('data-theme');
+          if (attr === 'dark' || (saved === 'dark')) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/jekyll/">
+        <span>Jekyll 基准实测站</span>
+        <span class="version-pill">v4.4.1 · Ruby + Kramdown</span>
+        <span class="pioneer-pill">2008 SSG Pioneer</span>
+      </a>
+      <div class="topbar-actions">
+        <a href="https://page.2401.xyz/" target="_top">对比总站</a>
+        <a href="https://github.com/page2401/jekyll" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-btn" id="jekyll-theme-toggle" type="button">切换深浅色</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" aria-label="基准测试章节导航">
+        <div class="nav-group-label">基准章节 (_data/nav.yml)</div>
+        <ul class="nav-list">
+          
+          <li>
+            <a class="nav-link" href="/jekyll/">
+              00. 概览与版本档案
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link active" href="/jekyll/03-math/">
+              03. 数学公式排版
+            </a>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+            
+            <div class="nav-subgroup">
+              
+              <div class="nav-subgroup-label">嵌套子目录 (nested)</div>
+              
+              <ul class="nav-sublist">
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/01-order-and-url/">
+                    嵌套子页 A：排序前缀与 URL 纯净度权衡
+                  </a>
+                </li>
+                
+                <li>
+                  <a class="nav-link" href="/jekyll/04-directory/nested/02-sidebar-sync/">
+                    嵌套子页 B：多级子目录与侧边栏同步机制
+                  </a>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </li>
+          
+          <li>
+            <a class="nav-link" href="/jekyll/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+            
+          </li>
+          
+        </ul>
+      </aside>
+
+      <main class="main-content" id="jekyll-prose">
+        <div class="meta-banner">
+          <span>Layout: <strong>_layouts/default.html</strong></span>
+          <span>·</span>
+          <span>Parser: <strong>Kramdown 2.6.1 (GFM) + Rouge 4.7.0</strong></span>
+        </div>
+        <h1 id="03-数学公式排版kramdown-math_engine--本地-katex-0191">03. 数学公式排版（Kramdown <code class="language-plaintext highlighter-rouge">math_engine</code> + 本地 KaTeX 0.19.1）</h1>
+
+<p>Kramdown 在数学排版上具有独特的<strong>“半保护 AST”历史机制</strong>：其自 2009 年起规定行内与块级公式统一使用双美元符号 <code class="language-plaintext highlighter-rouge">$$...$$</code>，因此下方第 2–4 节所有多行 <code class="language-plaintext highlighter-rouge">$$...$$</code> 块均被 Kramdown 内置 <code class="language-plaintext highlighter-rouge">math_engine: mathjax</code> 无损转换为 <code class="language-plaintext highlighter-rouge">\[...\]</code>（<strong>完全无需像无公式 AST 引擎那样双写 <code class="language-plaintext highlighter-rouge">\\\\</code> 换行符</strong>）；同时 <code class="language-plaintext highlighter-rouge">kramdown-parser-gfm</code> 禁用了词内 <code class="language-plaintext highlighter-rouge">_</code> 斜体，使第 1 节单 <code class="language-plaintext highlighter-rouge">$...$</code> 行内公式也能原样透传给本地 <code class="language-plaintext highlighter-rouge">katex@0.19.1</code> 渲染——唯一需要派生改写的是第 5 节字面量 <code class="language-plaintext highlighter-rouge">\$</code> 转义！</p>
+
+<h2 id="1-行内公式与中英文混排基线对齐">1. 行内公式与中英文混排基线对齐</h2>
+
+<p>考察重点：行内公式在中文字号下的缩放比例、上下标是否撑乱行高，以及分数与根号在行内的紧凑度。</p>
+
+<ul>
+  <li>质能方程 $E = mc^2$ 与欧拉恒等式 $e^{i\pi} + 1 = 0$ 嵌入在连续中文段落中的视觉基线表现。</li>
+  <li>归并排序的平均时间复杂度为 $\mathcal{O}(n \log n)$，而空间复杂度为 $\Theta(n)$；当输入规模满足 $n \ge 2^{16}$ 时，常数因子差异显著。</li>
+  <li>贝叶斯条件概率公式行内排印：$P(A \mid B) = \frac{P(B \mid A)\,P(A)}{P(B)}$，以及带根号的欧氏距离 $d(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{i=1}^{n}(x_i - y_i)^2}$。</li>
+</ul>
+
+<h2 id="2-多行等式对齐推导aligned-环境">2. 多行等式对齐推导（<code class="language-plaintext highlighter-rouge">aligned</code> 环境）</h2>
+
+<p>测试 <code class="language-plaintext highlighter-rouge">\begin{aligned} ... \end{aligned}</code> 多行对齐、积分算子与括号自动缩放 <code class="language-plaintext highlighter-rouge">\left( ... \right)</code>：</p>
+
+\[\begin{aligned}
+I^2 &amp;= \left( \int_{-\infty}^{+\infty} e^{-x^2}\,\mathrm{d}x \right) \left( \int_{-\infty}^{+\infty} e^{-y^2}\,\mathrm{d}y \right) \\
+    &amp;= \iint_{\mathbb{R}^2} e^{-(x^2 + y^2)}\,\mathrm{d}x\,\mathrm{d}y \\
+    &amp;= \int_{0}^{2\pi} \int_{0}^{+\infty} e^{-r^2} r\,\mathrm{d}r\,\mathrm{d}\theta \\
+    &amp;= 2\pi \cdot \left[ -\frac{1}{2} e^{-r^2} \right]_{0}^{+\infty} = \pi \implies I = \sqrt{\pi}
+\end{aligned}\]
+
+<h2 id="3-矩阵运算与注意力机制bmatrix-环境">3. 矩阵运算与注意力机制（<code class="language-plaintext highlighter-rouge">bmatrix</code> 环境）</h2>
+
+<p>测试缩放点积注意力公式及矩阵乘法排版：</p>
+
+\[\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V\]
+
+\[\mathbf{J}_{\mathbf{f}}(\mathbf{x}) =
+\begin{bmatrix}
+\dfrac{\partial f_1}{\partial x_1} &amp; \dfrac{\partial f_1}{\partial x_2} &amp; \cdots &amp; \dfrac{\partial f_1}{\partial x_n} \\[6pt]
+\dfrac{\partial f_2}{\partial x_1} &amp; \dfrac{\partial f_2}{\partial x_2} &amp; \cdots &amp; \dfrac{\partial f_2}{\partial x_n} \\[4pt]
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\[4pt]
+\dfrac{\partial f_m}{\partial x_1} &amp; \dfrac{\partial f_m}{\partial x_2} &amp; \cdots &amp; \dfrac{\partial f_m}{\partial x_n}
+\end{bmatrix}\]
+
+<h2 id="4-分段函数与优化目标cases-环境">4. 分段函数与优化目标（<code class="language-plaintext highlighter-rouge">cases</code> 环境）</h2>
+
+<p>测试 Huber Loss 分段函数与花括号对齐：</p>
+
+\[\mathcal{L}_{\delta}(y, \hat{y}) =
+\begin{cases}
+\dfrac{1}{2}(y - \hat{y})^2, &amp; \text{if } |y - \hat{y}| \le \delta, \\[8pt]
+\delta \cdot \left(|y - \hat{y}| - \dfrac{1}{2}\delta\right), &amp; \text{otherwise.}
+\end{cases}\]
+
+<h2 id="5-字面量美元符号--转义边界测试">5. 字面量美元符号 <code class="language-plaintext highlighter-rouge">\$</code> 转义边界测试</h2>
+
+<p>在启用 <code class="language-plaintext highlighter-rouge">$...$</code> 行内数学公式后，同一段落出现两个价格数字（例如基础套餐 \$29/月 与专业版 \$99/月）时，因 Kramdown 将单反斜杠 <code class="language-plaintext highlighter-rouge">\$</code> 视为普通标点转义并在输出 HTML 时剥离反斜杠，派生文档须写作 <code class="language-plaintext highlighter-rouge">\\$</code> 才能把字面量转义透传给客户端渲染器；而在反引号代码片段中编写环境变量 <code class="language-plaintext highlighter-rouge">$HOME</code> 或 <code class="language-plaintext highlighter-rouge">awk '{print $1}'</code> 则应原样保留，无需反斜杠转义。</p>
+
+      </main>
+
+      <aside class="toc-aside" id="jekyll-toc-aside">
+        <div class="toc-title">本页目录</div>
+        <ul class="toc-list" id="jekyll-toc-list"></ul>
+      </aside>
+    </div>
+
+    <script src="/jekyll/assets/vendor/katex.min.js"></script>
+    <script src="/jekyll/assets/vendor/auto-render.min.js"></script>
+    <script src="/jekyll/assets/vendor/mermaid.min.js"></script>
+    <script src="/jekyll/assets/js/site.js"></script>
+  </body>
+</html>
