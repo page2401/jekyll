@@ -1,0 +1,20 @@
+- title: "00. 概览与版本档案"
+  url: "/"
+
+- title: "01. 专属标注与元数据"
+  url: "/01-annotations/"
+
+- title: "02. 流程图与时序图"
+  url: "/02-diagrams/"
+
+- title: "03. 数学公式排版"
+  url: "/03-math/"
+
+- title: "04. 目录结构与路由取舍"
+  url: "/04-directory/"
+  group_title: "嵌套子目录 (nested)"
+  children:
+    - title: "嵌套子页 A：排序前缀与 URL 纯净度权衡"
+      url: "/04-directory/nested/01-order-and-url/"
+    - title: "嵌套子页 B：多级子目录与侧边栏同步机制"
+      url: "/04-directory/nested/02-sidebar-sync/"

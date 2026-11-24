@@ -1,0 +1,12 @@
+source "https://rubygems.org"
+
+gem "jekyll", "4.4.1"
+gem "kramdown", "2.6.1"
+gem "kramdown-parser-gfm", "1.1.0"
+gem "rouge", "4.7.0"
+gem "liquid", "4.0.4"
+gem "jekyll-sass-converter", "3.1.0"
+gem "csv", "3.3.7"
+gem "logger", "1.7.0"
+gem "base64", "0.3.0"
+gem "webrick", "1.9.2"

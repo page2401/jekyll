@@ -1,0 +1,41 @@
+name: Deploy Jekyll 4.4 to page branch
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages-jekyll
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby 3.2 with Bundler cache
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Build static site with Jekyll
+        run: |
+          bundle exec jekyll build
+          touch _site/.nojekyll
+
+      - name: Publish static output to orphan page branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _site
+          publish_branch: page
+          force_orphan: true
+          commit_message: "deploy(page): build from ${{ github.sha }}"

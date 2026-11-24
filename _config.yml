@@ -1,0 +1,34 @@
+title: "Jekyll 基准实测站"
+description: "静态网站生成器开山鼻祖 Jekyll (v4.4.1 · Ruby + Liquid + Kramdown + Rouge) 基准实测子站"
+url: "https://page.2401.xyz"
+baseurl: "/jekyll"
+permalink: pretty
+
+markdown: kramdown
+highlighter: rouge
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+  math_engine: mathjax
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+params:
+  version: "4.4.1"
+  portal: "https://page.2401.xyz/"
+  repo: "https://github.com/page2401/jekyll"
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .bundle
+  - .jekyll-cache
+  - .sass-cache

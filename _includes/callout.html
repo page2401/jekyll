@@ -1,0 +1,9 @@
+{% assign callout_type = include.type | default: "info" %}
+<aside class="callout callout-{{ callout_type }}" role="note">
+  {% if include.title %}
+  <div class="callout-title">{{ include.title }}</div>
+  {% endif %}
+  <div class="callout-body">
+    {{ include.content | markdownify }}
+  </div>
+</aside>

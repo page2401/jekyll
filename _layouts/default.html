@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% if page.url == "/" %}{{ site.title }}{% else %}{{ page.title }} · {{ site.title }}{% endif %}</title>
+    {% if page.description %}
+    <meta name="description" content="{{ page.description }}" />
+    {% endif %}
+    <link rel="stylesheet" href="{{ '/assets/vendor/katex.min.css' | relative_url }}" />
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('jekyll-benchmark-theme');
+          var attr = document.documentElement.getAttribute('data-theme');
+          if (attr === 'dark' || (saved === 'dark')) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="{{ '/' | relative_url }}">
+        <span>{{ site.title }}</span>
+        <span class="version-pill">v{{ site.params.version }} · Ruby + Kramdown</span>
+        <span class="pioneer-pill">2008 SSG Pioneer</span>
+      </a>
+      <div class="topbar-actions">
+        <a href="{{ site.params.portal }}" target="_top">对比总站</a>
+        <a href="{{ site.params.repo }}" target="_blank" rel="noopener">GitHub</a>
+        <button class="theme-btn" id="jekyll-theme-toggle" type="button">切换深浅色</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" aria-label="基准测试章节导航">
+        <div class="nav-group-label">基准章节 (_data/nav.yml)</div>
+        <ul class="nav-list">
+          {% for item in site.data.nav %}
+          <li>
+            <a class="nav-link{% if page.url == item.url %} active{% endif %}" href="{{ item.url | relative_url }}">
+              {{ item.title }}
+            </a>
+            {% if item.children %}
+            <div class="nav-subgroup">
+              {% if item.group_title %}
+              <div class="nav-subgroup-label">{{ item.group_title }}</div>
+              {% endif %}
+              <ul class="nav-sublist">
+                {% for child in item.children %}
+                <li>
+                  <a class="nav-link{% if page.url == child.url %} active{% endif %}" href="{{ child.url | relative_url }}">
+                    {{ child.title }}
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </aside>
+
+      <main class="main-content" id="jekyll-prose">
+        <div class="meta-banner">
+          <span>Layout: <strong>_layouts/{{ page.layout | default: "default" }}.html</strong></span>
+          <span>·</span>
+          <span>Parser: <strong>Kramdown 2.6.1 (GFM) + Rouge 4.7.0</strong></span>
+        </div>
+        {{ content }}
+      </main>
+
+      <aside class="toc-aside" id="jekyll-toc-aside">
+        <div class="toc-title">本页目录</div>
+        <ul class="toc-list" id="jekyll-toc-list"></ul>
+      </aside>
+    </div>
+
+    <script src="{{ '/assets/vendor/katex.min.js' | relative_url }}"></script>
+    <script src="{{ '/assets/vendor/auto-render.min.js' | relative_url }}"></script>
+    <script src="{{ '/assets/vendor/mermaid.min.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/site.js' | relative_url }}"></script>
+  </body>
+</html>
