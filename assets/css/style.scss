@@ -320,7 +320,31 @@ pre {
   }
 }
 
-/* Rouge syntax highlighting tokens */
+/* Rouge syntax highlighting tokens, linenos table, mark_lines (.hll) & diff (.gd/.gi) */
+figure.highlight {
+  margin: 1rem 0;
+}
+
+.code-filename {
+  display: inline-block;
+  margin: 0.75rem 0 -0.65rem;
+  padding: 0.24rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--fg-muted);
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+
+  + figure.highlight pre,
+  + div.highlighter-rouge pre {
+    margin-top: 0;
+    border-top-left-radius: 0;
+  }
+}
+
 .highlight {
   .c, .ch, .cd, .cm, .cpf, .c1, .cs { color: var(--tok-comment); font-style: italic; }
   .k, .kc, .kd, .kn, .kp, .kr, .kt, .nt, .ow { color: var(--tok-keyword); }
@@ -328,6 +352,54 @@ pre {
   .nf, .fm, .nc, .nn { color: var(--tok-fn); }
   .m, .mb, .mf, .mh, .mi, .il, .mo { color: var(--tok-num); }
   .na, .nb, .no, .nv, .vc, .vg, .vi, .gt { color: var(--tok-attr); }
+
+  .hll {
+    display: inline-block;
+    width: 100%;
+    background: var(--warning-bg);
+  }
+
+  .gd {
+    color: var(--caution-fg);
+    background: var(--caution-bg);
+  }
+
+  .gi {
+    color: var(--tip-fg);
+    background: var(--tip-bg);
+  }
+
+  table.rouge-table {
+    margin: 0;
+    width: 100%;
+    border: none;
+
+    td {
+      border: none;
+      padding: 0;
+      vertical-align: top;
+    }
+
+    td.gutter {
+      width: 1%;
+      padding-right: 0.85rem;
+      border-right: 1px solid var(--border);
+      color: var(--fg-muted);
+      user-select: none;
+      text-align: right;
+    }
+
+    td.code {
+      padding-left: 0.9rem;
+    }
+
+    pre {
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: transparent;
+    }
+  }
 }
 
 table {

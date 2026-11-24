@@ -24,6 +24,10 @@ description: "静态网站生成器开山鼻祖 Jekyll (v4.4.1 · Ruby + Liquid 
     <h3><a href="{% link 04-directory/index.md %}">04. 目录结构与路由取舍 →</a></h3>
     <p>溯源 <code>_layouts/</code>、<code>_data/nav.yml</code> 下划线目录约定（<code>.nojekyll</code> 的历史由来）与编译期死链校验标签 <code>{% raw %}{% link %}{% endraw %}</code>。</p>
   </div>
+  <div class="hero-card">
+    <h3><a href="{% link 05-code-blocks.md %}">05. 高阶代码块与语法高亮 →</a></h3>
+    <p>并列实测纯 Ruby 引擎 <strong>Rouge 4.7</strong> 在 Liquid <code>{% raw %}{% highlight typescript linenos %}{% endraw %}</code> 与 Kramdown GFM 围栏下的表现。</p>
+  </div>
 </div>
 
 ## 精确锁定版本档案（`Gemfile` + 本地静态资源）
@@ -41,7 +45,7 @@ description: "静态网站生成器开山鼻祖 Jekyll (v4.4.1 · Ruby + Liquid 
 | `csv` / `logger` / `base64` / `webrick` | `3.3.7` / `1.7.0` / `0.3.0` / `1.9.2` | 适配现代 Ruby 3.2+ 标准库外迁（Stdlib Gemification）的显式运行时依赖 |
 | `katex` / `mermaid` (本地 `assets/vendor/`) | `0.19.1` / `12.3.0` | 同源离线托管 `katex.min.js`、`auto-render.min.js`、`woff2` 字体与 `mermaid.min.js` |
 
-## 五大标准基准章节对照
+## 六大标准基准章节对照
 
 | 章节路径 | 测试维度 | 相对母版 `docs/*.md` 的核心派生改造点 |
 | :--- | :--- | :--- |
@@ -49,3 +53,4 @@ description: "静态网站生成器开山鼻祖 Jekyll (v4.4.1 · Ruby + Liquid 
 | [`02-diagrams.md`]({% link 02-diagrams.md %}) | 流程图与时序图 | 正文三段 Mermaid 代码块一字不改；Rouge 对未知语言回退输出 `<code class="language-mermaid">` 由客户端接管 |
 | [`03-math.md`]({% link 03-math.md %}) | 数学公式排版 | 4 组 `$$...$$` 多行公式零反斜杠改动直出 `\[...\]`；仅第 5 节字面量 `\$29` 因 Kramdown 消费转义须改写为 `\\$29` |
 | [`04-directory/`]({% link 04-directory/index.md %}) | 目录结构与路由取舍 | 根目录平铺 + `_config.yml` `exclude` 隔离工程文件 + `_data/nav.yml` 数据驱动侧边栏 + `{% raw %}{% link %}{% endraw %}` 内链校验 |
+| [`05-code-blocks.md`]({% link 05-code-blocks.md %}) | 高阶代码块与语法高亮 | 对比 Liquid `{% raw %}{% highlight typescript linenos mark_lines="..." %}{% endraw %}` 与 Kramdown 围栏 ```` ```ts ```` / ```` ```diff ```` 在 Rouge 下的输出差异 |
